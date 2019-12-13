@@ -1,0 +1,178 @@
+{% extends 'main.html' %}
+{% block title %}Profile{% endblock %}
+{% block navigation %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'dl:home' %}">Home</a></li>
+    <li class="breadcrumb-item" aria-current="page" style="color:#66a1db">Личный кабинет</li>
+      {% if request.user.student %}
+        <li class="breadcrumb-item" aria-current="page">{{ teacher.first_name }} {{ teacher.last_name }}</li>
+      {% elif request.user.teacher %}
+        <li class="breadcrumb-item" aria-current="page">{{ student.first_name }} {{ student.last_name }}</li>
+      {% endif %}
+  </ol>
+</nav>
+{% endblock %}
+{% block students %}
+    <nav class="navbar">
+            <h2 >Личный кабинет</h2>
+        </nav>
+    <hr>
+    {% if request.user.student and courses_list.count > 0 %}
+        <div style="width: 100%; height: auto; padding-left: 30px;color:#66a1db">
+            <div style="width: 50%;height: auto;float: left;color:#66a1db">
+            <img class="rounded-circle" src="{{ teacher.teacher.image.url }}" width="150px" height="150px">
+                <br>
+                <br><h4>Данны пользователя</h4>
+            <h5 style="padding-left: 30px;color:#66a1db">Full name</h5>
+            <h6 style="padding-left: 50px;color:#66a1db">{{ teacher.first_name }} {{ teacher.last_name }}</h6>
+            <h5 style="padding-left: 30px;color:#66a1db">Last login</h5>
+            <h6 style="padding-left: 50px;color:#66a1db">    {{ teacher.last_login }}</h6>
+            <h5 style="padding-left: 30px;color:#66a1db">E-Mail</h5>
+            <h6 style="padding-left: 50px;color:#66a1db">    {{ teacher.email }}</h6>
+                <br>
+        </div>
+        <div style="text-align: left;width: 50%;height: 300px;float: right;color:#66a1db">
+            <h3>Courses</h3>
+            {% for c in courses_list %}
+                <a>{{ c.subject_name }}</a><br>
+            {% endfor %}
+        </div>
+        </div>
+
+    {% elif student %}
+         <div style="width: 100%; height: auto; padding-left: 30px">
+            <div style="width: 50%;height: auto;float: left">
+            <img class="rounded-circle" src="{{ request.user.student.image.url }}" width="150px" height="150px">
+                <br>
+                <br><h4 style="color:blue">Данные пользователя</h4>
+            <h5 style="padding-left: 30px;color:#66a1db">Полное имя</h5>
+            <h6 style="padding-left: 50px;color:#66a1db">{{ request.user.first_name }} {{ request.user.last_name }}</h6>
+            <h5 style="padding-left: 30px;color:#66a1db">Логин</h5>
+            <h6 style="padding-left: 50px;color:#66a1db">    {{ request.user.last_login }}</h6>
+            <h5 style="padding-left: 30px;color:#66a1db">E-Mail</h5>
+            <h6 style="padding-left: 50px;color:#66a1db">    {{ request.user.email }}</h6>
+                <br>
+        </div>
+        <div style="text-align: left;width: 50%;height: 300px;float: right">
+            <h5>Change photo</h5>
+            <form method="POST" action="{% url 'dl:change_photo' request.user.pk %}" enctype="multipart/form-data">
+                {% csrf_token %}
+            <div class="input-group">
+                     <div class="input-group-prepend">
+                         <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+                     </div>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="inputGroupFile01"
+                           aria-describedby="inputGroupFileAddon01" name="file" accept=".png,.jpg,.gif">
+                    <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                    <h6></h6>
+            </div>
+                </div> <button type="submit" class="btn btn-primary" style="margin-left: 0px; margin-top: 30px">Change</button>
+                </form>
+        </div>
+        </div>
+        {% elif student %}
+         <div style="width: 100%; height: auto; padding-left: 30px">
+            <div style="width: 50%;height: auto;float: left">
+            <img class="rounded-circle" src="{{ request.user.student.image.url }}" width="150px" height="150px">
+                <br><h4>User details</h4>
+                <br>
+            <strong><h4>Full name</h4></strong>
+            <h6 style="padding-left: 30px">{{ request.user.first_name }} {{ request.user.last_name }}</h6>
+            <h4>Last login</h4>
+            <h6 style="padding-left: 30px">    {{ request.user.last_login }}</h6>
+            <h4>E-Mail</h4>
+            <h6 style="padding-left: 30px">    {{ request.user.email }}</h6>
+                <br>
+        </div>
+        <div style="text-align: left;width: 50%;height: 300px;float: right">
+            <h5>Change photo</h5>
+            <form method="POST" action="{% url 'dl:change_photo' request.user.pk %}" enctype="multipart/form-data">
+                {% csrf_token %}
+            <div class="input-group">
+                     <div class="input-group-prepend">
+                         <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+                     </div>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="inputGroupFile01"
+                           aria-describedby="inputGroupFileAddon01" name="file" accept=".png,.jpg,.gif">
+                    <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                    <h6></h6>
+                </div> <button type="submit" class="btn btn-primary" style="margin-left: 10px">Change</button>
+            </div>
+                </form>
+        </div>
+        </div>
+    {% else %}
+        <div class="alert alert-danger" role="alert">
+            Error!
+        </div>
+    {% endif %}
+{% endblock %}
+{% block teachers %}
+    <nav class="navbar">
+            <h2 style="color:#66a1db">Profile</h2>
+        </nav>
+    <hr>
+    {% if request.user.teacher and courses_list.count > 0 %}
+        <div style="width: 100%; padding-left: 30px">
+            <div style="width: 50%;height: auto;float: left">
+            <img class="rounded-circle" src="{{ student.student.image.url }}" width="150px" height="150px">
+                <br>
+                <br><h4>User details</h4>
+            <h5 style="padding-left: 30px;color:#66a1db">Full name</h5>
+            <h6 style="padding-left: 50px;color:#66a1db">{{ student.first_name }} {{ student.last_name }}</h6>
+            <h5 style="padding-left: 30px;color:#66a1db">Last login</h5>
+            <h6 style="padding-left: 50px;color:#66a1db">    {{ student.last_login }}</h6>
+            <h5 style="padding-left: 30px;color:#66a1db">E-Mail</h5>
+            <h6 style="padding-left: 50px;color:#66a1db">    {{ student.email }}</h6>
+                <br>
+        </div>
+        <div style="text-align: left;width: 50%;height: 300px;float: right">
+            <h3>Courses</h3>
+            {% for c in courses_list %}
+                <a href="{% url 'dl:courses' c.pk %}" style="color: black">{{ c.subject_name }}</a><br>
+            {% endfor %}
+        </div>
+        </div>
+    {% elif teacher %}
+         <div style="width: 100%; height: auto; padding-left: 30px">
+            <div style="width: 50%;height: auto;float: left">
+            <img class="rounded-circle" src="{{ request.user.teacher.image.url }}" width="150px" height="150px">
+                <br>
+                <br>
+
+            <strong><h4 style="color:#66a1db">Full name</h4></strong>
+            <h6 style="padding-left: 30px;color:#66a1db">{{ request.user.first_name }} {{ request.user.last_name }}</h6>
+            <h4 style="color:#66a1db">Last login</h4>
+            <h6 style="padding-left: 30px;color:#66a1db">    {{ request.user.last_login }}</h6>
+            <h4 style="color:#66a1db">E-Mail</h4>
+            <h6 style="padding-left: 30px;color:#66a1db">    {{ request.user.email }}</h6>
+                <br>
+        </div>
+        <div style="text-align: left;width: 50%;height: 300px;float: right;color:#66a1db">
+            <h5>Change photo</h5>
+            <form method="POST" action="{% url 'dl:change_photo' request.user.pk %}" enctype="multipart/form-data">
+                {% csrf_token %}
+            <div class="input-group">
+                     <div class="input-group-prepend">
+                         <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+                     </div>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="inputGroupFile01"
+                           aria-describedby="inputGroupFileAddon01" name="file" accept=".png,.jpg,.gif">
+                    <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                    <h6></h6>
+                </div> <button type="submit" class="btn btn-primary" style="margin-left: 10px">Change</button>
+            </div>
+                </form>
+        </div>
+        </div>
+
+    {% else %}
+        <div class="alert alert-danger" role="alert">
+            <strong>Holy guacamole!</strong> You should check your url!
+        </div>
+    {% endif %}
+{% endblock %}

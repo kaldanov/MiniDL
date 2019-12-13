@@ -1,0 +1,61 @@
+{% extends 'main.html' %}
+{% block title %}Rate{% endblock %}
+{% load cmds %}
+{% block navigation %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'dl:home' %}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'dl:courses' course_id %}">{{ course_name }}</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'dl:show_task' course_id task.pk %}">{{ task.title }}</a></li>
+    <li class="breadcrumb-item disabled" >{{ group_name}}</li>
+    <li class="breadcrumb-item" aria-current="page">Rate</li>
+  </ol>
+</nav>
+{% endblock %}
+{% block teachers %}
+    <nav class="navbar">
+            <h2>{{ task.title }}</h2>
+        </nav>
+    <hr>
+    <table class="table table-striped table-light table-borderless table-hover table-hover-cells">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Студент</th>
+            <th scope="col">Оценки</th>
+            <th scope="col">Загрузить файлы</th>
+            <th scope="col">Выбор</th>
+        </tr>
+        </thead><tbody>
+        {% for s in students_list %}
+        <form action="{% url 'dl:set_grade' course_id s.group_id user.pk s.pk task.pk %}" method="POST">
+            {% csrf_token %}
+
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <th><h6><a href="{% url 'dl:see_profile' s.user.pk %}" style="color: black">({{ s.user.username }}) {{ s.user.first_name }} {{ s.user.last_name }}</a></h6></th>
+                <th>
+
+
+                            <input  type="number" style="height: 30px; width: 75px" class="form-control" name="inputGrade" placeholder="0"
+                                   {% for g in grades_list %}
+                                       {% if s.pk == g.student_id %}
+                                        value="{{ g.grade }}"
+                                    {% endif %}
+                                   {% endfor %}
+                            >
+
+
+                </th>
+                <th>
+                    {% for f in files_list %}
+                        {% if f.student == s.user.student %}<h5 ><img src="{{ f.file.url|give_img }} " style="padding-bottom: 3px" width="20px"><a style="color: black" href="{{ f.file.url }}"> {{ f.file.name }}</a></h5>{% endif %}
+                 {% endfor %}
+                </th>
+                <th><button type="submit" class="btn btn-dark btn-sm" >Сохранить</button></th>
+            </tr>
+
+            </form>
+        {% endfor %}</tbody>
+    </table>
+{% endblock %}

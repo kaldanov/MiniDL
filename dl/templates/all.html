@@ -1,0 +1,51 @@
+{% extends 'main.html' %}
+{% block title %}Home{% endblock %}
+{% block body %}
+    {% if student %}
+        <h1>{{ student.first_name }} {{student.last_name}}</h1>
+    {% endif %}
+    {% if departments_list %}
+        <h4>Departments</h4>
+        {% for a in departments_list %}
+            <a href = "{% url 'dl:home' a.id %}">{{ a.department_name }}</a><br>
+        {% endfor %}
+    {% else %}
+        Departments not found!
+    {% endif %}
+
+    {% if teachers_list %}
+        <h4>Teachers</h4>
+        {% for t in teachers_list %}
+            <a href = "{% url 'dl:home' t.id %}">{{ t.user.first_name }} {{ t.user.last_name }}</a><br>
+        {% endfor %}
+    {% else %}
+        Teachers not found!
+    {% endif %}
+
+    {% if groups_list %}
+        <h4>Groups</h4>
+        {% for g in groups_list %}
+            <a href = "{% url 'dl:home' g.id %}">{{ g.group_name }}</a><br>
+        {% endfor %}
+    {% else %}
+        Groups not found!
+    {% endif %}
+
+    {% if students_list %}
+        <h4>Students</h4>
+        {% for s in students_list %}
+            <a href = "{% url 'dl:home' s.id %}">{{ s.user.first_name }} {{ s.user.last_name }}</a><br>
+        {% endfor %}
+    {% else %}
+        Students not found!
+    {% endif %}
+
+    {% if subjects_list %}
+        <h4>Subjects</h4>
+        {% for f in subjects_list %}
+            <a href = "{% url 'dl:courses' f.id %}">{{ f.subject_name }}</a><br>
+        {% endfor %}
+    {% else %}
+        Subjects not found!
+    {% endif %}
+{% endblock %}

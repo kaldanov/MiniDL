@@ -1,0 +1,20 @@
+{% extends 'main.html' %}
+{% block title %}Student{% endblock %}
+{% load staticfiles %}
+{% load cmds %}
+{% block navigation %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'dl:home' %}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'dl:courses' course_id %}">{{ course_name.subject_name }}</a></li>
+    <li class="breadcrumb-item"><a>Посещаемость</a></li>
+    <li class="breadcrumb-item" aria-current="page"><a>{{ group_name }}</a></li>
+  </ol>
+</nav>
+{% endblock %}
+{% block students %}
+
+{% endblock %}
+{% block teachers %}
+
+{% endblock %}

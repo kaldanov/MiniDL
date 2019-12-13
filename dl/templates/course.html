@@ -1,0 +1,157 @@
+{% extends 'main.html' %}
+{% load staticfiles %}
+{% load cmds %}
+{% block title %}Course: {{ course_name }}{% endblock %}
+{% block navigation %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'dl:home' %}">Home</a></li>
+    <li class="breadcrumb-item" aria-current="page">{{ course_name }}</li>
+  </ol>
+</nav>
+{% endblock %}
+{% block students %}
+    {% if course_name %}
+        <nav class="navbar">
+            <h2>{{ course_name }}</h2>
+        </nav>
+        <hr>
+        <br>
+        <div class="course_main" style="padding-left: 90px">
+            <a href="#" style=" color: #5e87b5"><h5><img src="{% static 'images\folder.png' %}" width="17px" style="padding-bottom: 4px; color:blue"> Материалы</h5></a>
+            <a href="{% url 'dl:for_attendance' course_id %}" style=" color:blue"><h5><img src="{% static 'images\group 1.png' %}" width="17px" style="padding-bottom: 4px; color: #5e87b5">Посещаемость</h5></a>
+            <a href="#" style=" color: #5e87b5"><h5><img src="{% static 'images\marking 1.png' %}" width="17px" style="padding-bottom: 4px; color:blue"> РК-1</h5></a>
+            <a href="#" style="color: #5e87b5"><h5><img src="{% static 'images\marking 1.png' %}" width="17px" style="padding-bottom: 4px; color:blue"> РК-2</h5></a>
+            <a href="#" style="color: #5e87b5"><h5 class="select2-container--disabled"><img src="{% static 'images\verified-text-paper 1.png' %}" width="17px" style="padding-bottom: 4px; color:blue"> Финальный экзамен</h5></a>
+        </div>
+        <br>
+        {% for i in weeks %}
+            <hr>
+            <h4 style="padding-left: 20px;text-align: left">{{ forloop.counter }}-Неделя</h4>
+            {% for t in tasks_list %}
+                {% if forloop.parentloop.counter == t.week %}
+                    {% if request.user.student.group in t.groups.all and date|date:"c" >= t.date1|date:"c" and date|date:"c" <= t.date2|date:"c"%}
+                        <h5 style="padding-left: 70px;color:blue"><img src="{% static 'images/list.png' %} " style="padding-bottom: 3px" width="20px"><a style="color: black" href="{% url 'dl:show_task' course_id t.pk %}"> {{ t.title }}</a></h5>
+                    {% else %}
+                        <h5 style="padding-left: 70px;color:blue"><img src="{% static 'images/list.png' %} " style="padding-bottom: 3px" width="20px"><a class="disabled" style="pointer-events: none;color: dimgray" href="{% url 'dl:show_task' course_id t.pk %}"> {{ t.title }}</a></h5>
+                        <span class="badge badge-pill badge-danger" style="margin-left: 100px;color:blue">Restricted</span>
+                        <ul>
+                        {% if not request.user.student.group in t.groups.all %}
+                            {% for gr in tasks_list %}
+                            {% if not request.user.student.group in gr.groups.all %}
+                              {% for group in gr.groups.all %}
+                                <li style="margin-left: 105px;color:blue">Вы принадлежите к <strong>{{ group }}</strong></li>
+                              {% endfor %}
+                            {% endif %}
+
+                            {% endfor %}
+                            {% if not date|date:"c" >= t.date1|date:"c" and date|date:"c" <= t.date2|date:"c" %}
+                                    <li style="margin-left: 105px">From: <strong>{{ t.date1|date:"SHORT_DATE_FORMAT" }} {{ t.date1|time:"G:i" }}</strong></li>
+                                    <li style="margin-left: 105px">To: <strong>{{ t.date2|date:"SHORT_DATE_FORMAT" }} {{ t.date2|time:"G:i" }}</strong></li>
+                            {% else %}
+                                <li style="margin-left: 105px">From: <strong>{{ t.date1|date:"SHORT_DATE_FORMAT" }} {{ t.date1|time:"G:i" }}</strong></li>
+                                    <li style="margin-left: 105px">To: <strong>{{ t.date2|date:"SHORT_DATE_FORMAT" }} {{ t.date2|time:"G:i" }}</strong></li>
+
+                            {% endif %}
+                            {% else %}
+                            {% if not date|date:"c" >= t.date1|date:"c" and date|date:"c" <= t.date2|date:"c" %}
+                                    <li style="margin-left: 105px">From: <strong>{{ t.date1|date:"SHORT_DATE_FORMAT" }} {{ t.date1|time:"G:i" }}</strong></li>
+                                    <li style="margin-left: 105px">To: <strong>{{ t.date2|date:"SHORT_DATE_FORMAT" }} {{ t.date2|time:"G:i" }}</strong></li>
+                            {% else %}
+                                <li style="margin-left: 105px">From: <strong>{{ t.date1|date:"SHORT_DATE_FORMAT" }} {{ t.date1|time:"G:i" }}</strong></li>
+                                    <li style="margin-left: 105px">To: <strong>{{ t.date2|date:"SHORT_DATE_FORMAT" }} {{ t.date2|time:"G:i" }}</strong></li>
+
+                            {% endif %}
+                            {% endif %}
+                        </ul>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            {% for f in files_list %}
+                {% if forloop.parentloop.counter == f.week %}
+                    <h5 style="padding-left: 70px"><img src="{{ f.file.url|give_img }} " style="padding-bottom: 3px" width="20px"><a style="color: #5e87b5" href="{{ f.file.url }}"> {{ f.title }}</a></h5>
+
+                {% endif %}
+                {% endfor %}
+            {% endfor %}
+    {% else %}
+        error
+    {% endif %}
+{% endblock %}
+{% block teachers %}
+    {% if course_name %}
+        <nav class="navbar">
+            <h2>{{ course_name }}</h2>
+        </nav>
+        <hr>
+        <br>
+        <div class="course_main" style="padding-left: 90px">
+            <a href="#" style="color: #5e87b5"><h5><img src="{% static 'images\folders.png' %}" width="30px" style="padding-bottom: 4px"> Материалы</h5></a>
+            <a href="{% url 'dl:for_attendance' course_id %}" style="color: #5e87b5"><h5><img src="{% static 'images\group.png' %}" width="30px" style="padding-bottom: 4px"> Посещаемость</h5></a>
+            <a href="#" style="color: #5e87b5"><h5><img src="{% static 'images\shopping-list.png' %}" width="30px" style="padding-bottom: 4px"> РК-1</h5></a>
+            <a href="#" style="color: #5e87b5"><h5><img src="{% static 'images\shopping-list.png' %}" width="30px" style="padding-bottom: 4px"> РК-2</h5></a>
+            <a href="#" style="color: #5e87b5"><h5 class="select2-container--disabled"><img src="{% static 'images\test.png' %}" width="30px" style="padding-bottom: 4px"> Финальный экзамен</h5></a>
+            <a href="#" style="color: #5e87b5"><h5 class="select2-container--disabled"><img src="{% static 'images\clipboard.png' %}" width="30px" style="padding-bottom: 4px"> Добавить задачи</h5></a>
+        </div>
+        <br>
+        {% for i in weeks %}
+            <hr>
+            <h4 style="padding-left: 20px;text-align: left">{{ forloop.counter }}-Неделя<button class="huacamola" data-toggle="modal" data-target="#exampleModal" data-whatever="{{ forloop.counter }}"></button></h4>
+            {% for t in tasks_list %}
+                {% if forloop.parentloop.counter == t.week %}
+                    <h5 style="padding-left: 70px"><img src="{% static 'images/list.png' %} " style="padding-bottom: 3px" width="20px"><a style="color: #5e87b5" href="{% url 'dl:show_task' course_id t.pk %}"> {{ t.title }}</a></h5>
+                {% endif %}
+            {% endfor %}
+            {% for f in files_list %}
+                {% if forloop.parentloop.counter == f.week %}
+                    <h5 style="padding-left: 70px"><img src="{{ f.file.url|give_img }} " style="padding-bottom: 3px" width="20px"><a style="color: black" href="{{ f.file.url }}"> {{ f.title }}</a></h5>
+
+                {% endif %}
+                {% endfor %}
+            <form action="{% url 'dl:upload_file' course_id user.teacher.pk %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Загрузить файлы</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="form-group">
+                      <label for="recipient-name" class="col-form-label">Неделя:</label>
+                      <input name="week" type="number" class="form-control" id="recipient-name">
+                    </div>
+                    <div class="form-group">
+                      <label for="message-text" class="col-form-label">Название:</label>
+                        <input name="title" type="text" class="form-control" id="recipient-name">
+                        <br>
+                        <br>
+                        <div class="input-group">
+                     <div class="input-group-prepend">
+                           <span class="input-group-text" id="inputGroupFileAddon01">Загрузить</span>
+                         </div>
+                         <div class="custom-file">
+                           <input type="file" class="custom-file-input" id="inputGroupFile01"
+                             aria-describedby="inputGroupFileAddon01" name="file">
+                           <label class="custom-file-label" for="inputGroupFile01">Выбрать файл</label>
+                             <h6></h6>
+                         </div>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    <button type="submit" class="btn btn-primary">Сохранить изменеия</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </form>
+        {% endfor %}
+    {% else %}
+        errordwadwa
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'main.html' %}
+{% block title %}Grades{% endblock %}
+{% load cmds %}
+{% block navigation %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'dl:home' %}">Home</a></li>
+    <li class="breadcrumb-item" aria-current="page" style="color:#66a1db">Мои оценки</li>
+  </ol>
+</nav>
+{% endblock %}
+{% block students %}
+    {% if student %}
+        <table class="table table-striped table-light table-borderless table-hover table-hover-cells" >
+        <nav class="navbar">
+            <h2 >Мои оценки</h2>
+        </nav>
+        <hr>
+              <thead>
+                <tr>
+                  <th scope="col" >Название курса</th>
+                  <th scope="col" style="text-align: right;">Оценка</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for s in courses_list %}
+                <tr>
+                    <th scope="row"><a href="{% url 'dl:grades_detail' s.pk %}" style="color:#66a1db">({{ s.pk }}){{ s.subject_name }}</a></th>
+                            <th style="text-align: right">
+                                        <input type="text" style="background-color: rgba(0,0,0,0);color: black; border: none; text-align: right; color:#66a1db" disabled placeholder="F(0%)"
+                                        {% for a in grades_list %}
+                                            {% if s.pk == a.course.pk %}
+                                                value="{{ a.grade|get_letter }}({{ a.grade }}%)"
+                                            {% endif %}
+                                            {% endfor %}
+                            >
+                            </th>
+                </tr>
+                {% endfor %}
+              </tbody>
+        </table>
+
+    {% else %}
+        error
+    {% endif %}
+{% endblock %}

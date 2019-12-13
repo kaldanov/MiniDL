@@ -1,0 +1,44 @@
+{% extends 'main.html' %}
+{% block title %}Profile{% endblock %}
+{% load staticfiles %}
+{% block navigation %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'dl:home' %}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'dl:courses' course_id %}">{{ course_name.subject_name }}</a></li>
+    <li class="breadcrumb-item" aria-current="page"><a>Посещаемость</a></li>
+  </ol>
+</nav>
+{% endblock %}
+{% block students %}
+
+{% endblock %}
+{% block teachers %}
+    <table class="table table-striped table-light table-borderless table-hover table-hover-cells" >
+        <nav class="navbar">
+            <h2>Посещаемость</h2>
+        </nav>
+<hr>
+              <thead>
+                <tr>
+                  <th scope="col">Дата</th>
+                  <th scope="col">Информация</th>
+                  <th scope="col">Выбор</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for s in studproc %}
+                <tr>
+                    <th scope="row">{{ s.date_start|date:"SHORT_DATE_FORMAT" }}<br>{{ s.date_start.time|time:"G:i" }} -
+                        {{ s.date_end.time|time:"G:i" }}</th>
+                    <th scope="row">{{ s.type }} for {{ s.group.group_name }} in #{{ s.room }}</th>
+                    <th scope="row"><a href=""><img src="{% static 'images/enter-arrow.png' %}" style="width: 30px"></a></th>
+                </tr>
+                {% endfor %}
+
+              </tbody>
+        </table>
+
+
+
+{% endblock %}
